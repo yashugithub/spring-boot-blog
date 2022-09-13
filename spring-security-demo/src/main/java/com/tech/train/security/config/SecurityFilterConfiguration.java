@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +18,13 @@ import javax.net.ssl.HttpsURLConnection;
 @Configuration
 public class SecurityFilterConfiguration {
 
+    /**
+     * Define the Secuirty filter which perform the authentication
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests((authz) -> authz.anyRequest().authenticated())
@@ -24,17 +32,21 @@ public class SecurityFilterConfiguration {
         return http.build();
     }
 
+    /**
+     * Define the api's/path which are escape from authentication.
+     * @return
+     */
     @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web -> web.ignoring().antMatchers("/ignore1", "ignore2"));
     }
-
-    /*@Bean
+    
+    /**
+     * Below method is using the inmemory to authenticate the user information
+     *
+     * @return
+     */
+    @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withDefaultPasswordEncoder()
                 .username("user")
@@ -47,5 +59,5 @@ public class SecurityFilterConfiguration {
                 .roles("ADMIN", "USER")
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
-    }*/
+    }
 }
