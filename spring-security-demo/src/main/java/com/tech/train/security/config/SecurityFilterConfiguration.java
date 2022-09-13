@@ -1,5 +1,6 @@
 package com.tech.train.security.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -18,6 +19,9 @@ import javax.net.ssl.HttpsURLConnection;
 @Configuration
 public class SecurityFilterConfiguration {
 
+    @Autowired
+    CustomUserAuthenticationProvider customUserAuthenticationProvider;
+
     /**
      * Define the Secuirty filter which perform the authentication
      *
@@ -28,7 +32,8 @@ public class SecurityFilterConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests((authz) -> authz.anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults())
+                .authenticationProvider(customUserAuthenticationProvider);
         return http.build();
     }
 
@@ -40,7 +45,7 @@ public class SecurityFilterConfiguration {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web -> web.ignoring().antMatchers("/ignore1", "ignore2"));
     }
-    
+
     /**
      * Below method is using the inmemory to authenticate the user information
      *
