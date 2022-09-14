@@ -15,7 +15,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
  *
  */
 @Order(HIGHEST_PRECEDENCE)
-@EnableGlobalMethodSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
 @Configuration
 public class GlobalSecurityAuthProvider extends GlobalAuthenticationConfigurerAdapter {
 

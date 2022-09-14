@@ -11,15 +11,29 @@ WebSecurityConfigurerAdapter is deprecated in latest Spring Security. Use Securi
 
 Note: Examples find at UserLoginController.java
 
-##### Difference Between @EnableGlobalMethodSecurity and @EnableWebSecurity
+#### Custom Authentication provider
+ 
+ Next we will learn about how to introduce the custom authentication provider. 
 
-EnableGlobalMethodSecurity provides AOP security on methods. 
-Some of the annotations that it provides are PreAuthorize, PostAuthorize. 
-It also has support for JSR-250
+ Usecase: Authenticate the user details which are stored in h2 db and add couple more checks on user such as user is active and so on
+ 
+- Step 1 :- Introduce the CustomUserAuthenticationProvider
+    - extend AbstractUserDetailsAuthenticationProvider
+    - Implement the additionalAuthenticationChecks() and retrieveUser()
 
-EnableWebSecurity will provide configuration via HttpSecurity. 
-It's the configuration you could find with <http></http> tag in xml configuration, 
-it allows you to configure your access based on urls patterns,
-the authentication endpoints, handlers etc...
+- Step 2 :- Register CustomUserAuthenticationProvider to AuthenticationManager
+    - extend GlobalAuthenticationConfigurerAdapter
+    - register auth provider in init() 
+    
+Difference Between        @EnableGlobalMethodSecurity and @EnableWebSecurity
+
+    EnableGlobalMethodSecurity provides AOP security on methods. 
+    Some of the annotations that it provides are PreAuthorize, PostAuthorize. 
+    It also has support for JSR-250
+
+    EnableWebSecurity will provide configuration via HttpSecurity. 
+    It's the configuration you could find with <http></http> tag in xml configuration, 
+    it allows you to configure your access based on urls patterns,
+    the authentication endpoints, handlers etc...
 
 
