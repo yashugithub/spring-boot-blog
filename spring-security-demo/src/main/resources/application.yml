@@ -21,6 +21,7 @@ spring:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
   jpa:
+    defer-datasource-initialization: true
     generate-ddl: true
     hibernate:
       ddl-auto: update
@@ -29,4 +30,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+
+
+  #security:
+   # user:
+    #  name: yashodha
+     # password: test1234
 

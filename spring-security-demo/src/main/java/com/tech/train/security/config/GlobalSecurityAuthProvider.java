@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 /**
- * Register the authentication provider to Authentication Manager
+ * Register custom authentication provider to Authentication Manager
  *
  */
 @Order(HIGHEST_PRECEDENCE)
