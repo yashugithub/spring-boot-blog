@@ -2,12 +2,10 @@ package com.techtrain.spring.security.jwt.filter;
 
 import com.techtrain.spring.security.jwt.service.CustomUserDetailsService;
 import com.techtrain.spring.security.jwt.util.JWTutil;
-import io.jsonwebtoken.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,9 +40,9 @@ public class AuthorizationFilter  extends OncePerRequestFilter {
 
         if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(userName);
-            System.out.println("In request------------>" + jwt);
-            System.out.println("UserName :: "+ userDetails.getUsername());
-            System.out.println("SecurityContextHolder.getContext().getAuthentication() :: " +SecurityContextHolder.getContext().getAuthentication());
+            System.out.println("In Authorization Filter ::" + jwt);
+            System.out.println("UserName:: "+ userDetails.getUsername());
+            System.out.println("Security context :: " +SecurityContextHolder.getContext().getAuthentication());
 
             if(jwTutil.isValidToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =

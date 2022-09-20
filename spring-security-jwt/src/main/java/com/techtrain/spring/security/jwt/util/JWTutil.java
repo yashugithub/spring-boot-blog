@@ -11,6 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * This class is used to be handle the JWT token
+ *  1. Create JWT token with userName information and add Signature and expiry information
+ *  2. Validate the JWT token with Expiration information
+ *
+ *  These are the two jars used to create the JWT token
+ *  implementation 'io.jsonwebtoken:jjwt:0.9.1'
+ * 	implementation 'javax.xml.bind:jaxb-api:2.3.0'
+ */
+
 @Component
 public class JWTutil {
 
