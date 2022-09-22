@@ -1,20 +1,87 @@
 
-## Spring Security oAuth2 configurations
-spring:
-  security:
+##  Spring Security oAuth2 configurations for facebook
+## Uncomment below if facebook is the provider
+#spring:
+ # security:
+  #  oauth2:
+    #  client:
+     #   registration:
+      #    facebook:
+       #     clientId: 3199779683668880
+        #    clientSecret: adeb3199b01d45be0ebc5b2c839bb9ae
+         #   accessTokenUri: https://graph.facebook.com/oauth/access_token
+          #  userAuthorizationUri: https://www.facebook.com/dialog/oauth
+           # tokenName: oauth_token
+            #authenticationScheme: query
+            #clientAuthenticationScheme: form
+      #resource:
+       # userInfoUri: https://graph.facebook.com/me
+
+---
+### Spring Security with key-clock as the IAM provider to authenticate and authorize
+Spring:
+  Security:
     oauth2:
       client:
         registration:
-          facebook:
-            clientId: 3199779683668880
-            clientSecret: adeb3199b01d45be0ebc5b2c839bb9ae
-            accessTokenUri: https://graph.facebook.com/oauth/access_token
-            userAuthorizationUri: https://www.facebook.com/dialog/oauth
-            tokenName: oauth_token
-            authenticationScheme: query
-            clientAuthenticationScheme: form
-      resource:
-        userInfoUri: https://graph.facebook.com/me
+          keycloak:
+            client-id: oauth2-demo-client
+            client-secret: bab10f45-2d1b-4979-b45a-4184ff872b0c
+            scope: openid
+            authorizationGrantType: authorization-code
+            redirectUri: http://localhost:8086/
+            provider: keycloak
+        provider:
+          keycloak:
+            authorizationUri: http://localhost:8180/auth/realms/oauth2-demo-realm/protocol/openid-connect/auth
+            tokenUri: http://localhost:8180/auth/realms/oauth2-demo-realm/protocol/openid-connect/token
+            userInfoUri: http://localhost:8180/auth/realms/oauth2-demo-realm/protocol/openid-connect/userinfo
+            userNameAttribute: preferred_username
+---
+spring:
+  security:
+    oauth2:
+      resourceServer:
+        jwt:
+          issuer-uri: http://localhost:8180/auth/realms/oauth2-demo-realm
+          jwk-set-uri: http://localhost:8180/auth/realms/oauth2-demo-realm/protocol/openid-connect/certs
+
+### Server information
+---
+server:
+  max-http-header-size: 65536
+  port: 8086
+
+h2:
+  db:
+    port: 8082
+
+---
+spring:
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: true
+  datasource:
+    url: jdbc:h2:file:./build/db/h2;MODE=LEGACY;DB_CLOSE_ON_EXIT=FALSE
+    spurldev: jdbc:h2:tcp://localhost:\${h2.db.port}/./build/db/h2;MODE=LEGACY;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  jpa:
+    defer-datasource-initialization: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+    open-in-view: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
 
 
 
