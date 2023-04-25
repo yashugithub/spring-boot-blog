@@ -1,0 +1,79 @@
+databaseChangeLog:
+
+- changeSet:
+    id: parent
+    author: Administrator
+    changes:
+    - createTable:
+        tableName: mtusers
+        columns:
+        - column:
+            name: id
+            type: INT
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: user_pkey
+              nullable: false
+              unique: true
+        - column:
+            name: username
+            type: VARCHAR(255)
+            constraints:
+              nullable: false
+        - column:
+            name: firstname
+            type: VARCHAR(255)
+            constraints:
+              nullable: true
+        - column:
+            name: lastname
+            type: VARCHAR(255)
+            constraints:
+              nullable: true
+    - createTable:
+        tableName: tenant
+        columns:
+          - column:
+              name: id
+              type: INT
+              autoIncrement: true
+              constraints:
+                primaryKey: true
+                primaryKeyName: tenant_pkey
+                nullable: false
+          - column:
+              name: type
+              type: VARCHAR(255)
+              constraints:
+                nullable: false
+          - column:
+              name: name
+              type: VARCHAR
+              constraints:
+                nullable: false
+          - column:
+              name: enabled
+              type: BOOLEAN
+              constraints:
+                nullable: true
+          - column:
+              name: created_by
+              type: BIGINT
+              constraints:
+                nullable: true
+          - column:
+              name: created_on
+              type: BIGINT
+              constraints:
+                nullable: true
+          - column:
+              name: last_updated_by
+              type: BIGINT
+              constraints:
+                nullable: true
+          - column:
+              name: last_updated_on
+              type: BIGINT
+              constraints:
+                nullable: true

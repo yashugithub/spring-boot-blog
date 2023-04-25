@@ -1,0 +1,69 @@
+info:
+  build:
+    name: ${name}
+    version: ${buildVersion}
+    description: built with ${buildJob} on ${buildId}
+
+db:
+  host: \${DB_HOST:localhost}
+  port: \${ACS_DB_PORT:5432}
+  database: \${DB_NAME:mgmt_db}
+
+server:
+  max-http-header-size: 65536
+  port: 9095
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,application/javascript,text/html,text/xml,text/plain,text/css
+    min-response-size: 1
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on-param
+    include-exception: false
+  servlet:
+    context-path: /mt
+  shutdown: graceful
+
+spring:
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    hibern  ate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: public
+
+  datasource:
+    url: jdbc:postgresql://\${db.host}:\${db.port}/\${db.database}
+    username: \${DB_USERNAME:mgmt}
+    password: \${DB_PASSWORD:mgmtpostgresdbtest}
+
+###--- Started the multitenancy configuration integrated with liquibase
+multitenancy:
+  schema-cache:
+    maximumSize: 100000
+    expireAfterAccess: 10
+  parent:
+    schema: public
+    repository:
+      packages: com.techtrain.respository
+    entityManager:
+      packages: com.techtrain.entity
+    liquibase:
+      changeLog: classpath:db/changelog/db.changelog-master.yaml
+      enabled: true
+  default:
+    schema: default
+  tenant:
+    repository:
+      packages: com.techtrain.tenant.repository
+    entityManager:
+      packages: com.techtrain.tenant.entity
+    liquibase:
+      changeLog: classpath:db/changelog/db.changelog-per-tenant.yaml
+      enabled: true

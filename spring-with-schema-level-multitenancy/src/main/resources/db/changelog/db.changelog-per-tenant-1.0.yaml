@@ -1,0 +1,33 @@
+databaseChangeLog:
+
+- changeSet:
+    id: secret
+    author: Administrator
+    changes:
+    - createTable:
+        tableName: mtusers
+        columns:
+        - column:
+            name: id
+            type: INT
+            autoIncrement: true
+            constraints:
+              primaryKey: true
+              primaryKeyName: tenant_user_pkey
+              nullable: false
+              unique: true
+        - column:
+            name: username
+            type: VARCHAR(255)
+            constraints:
+              nullable: false
+        - column:
+            name: firstname
+            type: VARCHAR(255)
+            constraints:
+              nullable: true
+        - column:
+            name: lastname
+            type: VARCHAR(255)
+            constraints:
+              nullable: true

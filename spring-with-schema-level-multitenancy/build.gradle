@@ -1,0 +1,124 @@
+buildscript {
+	repositories {
+		maven { url 'https://ajoberstar.github.io/bintray-backup/' }
+		maven { url 'https://repo.spring.io/snapshot' }
+		maven { url 'https://repo.spring.io/milestone' }
+		gradlePluginPortal()
+	}
+	dependencies {
+		classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.7.10',
+				'org.ajoberstar:grgit:1.7.2',
+				'com.bmuschko:gradle-docker-plugin:6.4.0'
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.7.10'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
+	id 'jacoco'
+}
+
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+//apply plugin: DockerRemoteApiPlugin
+apply plugin: 'jacoco'
+
+group = 'com.mf.arcsight'
+// To avoid copywright parsing issues in multiple devices and Jsnkins
+compileJava.options.encoding = "Windows-1252"
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	buildJob = System.getProperty("build.job", "${System.getProperty("user.name")}'s private box")
+	buildId = System.getProperty("build.number", "0")
+	branch = System.getProperty("branch.name", "local")
+	buildVersion = "${project.'springmt.version'}-${buildId}"
+}
+
+//ext['tomcat.version'] = '9.0.69'
+
+String ESC = "${(char) 27}"
+String CYAN = "${ESC}[36m"
+String NORMAL = "${ESC}[0m"
+
+processResources {
+	from("$projectDir/src/main/resources") {
+		expand(project.properties)
+		include "application.yml"
+	}
+
+	from("$projectDir/src/main/resources") {
+		exclude "application.yml"
+	}
+
+	duplicatesStrategy = 'include'
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation "org.springframework.boot:spring-boot-devtools"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation 'org.liquibase:liquibase-core'
+	implementation 'com.google.guava:guava:31.1-jre'
+	implementation 'com.google.code.gson:gson:2.8.9'
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+
+jar {
+	enabled = false
+}
+
+bootJar.dependsOn(processResources)
+
+import org.ajoberstar.grgit.Grgit
+
+bootJar {
+
+	doFirst {
+		ant.mkdir(dir: "$buildDir/resources/main")
+		println "${CYAN}* jar:$NORMAL generating git.properties"
+		File gitPropsFile = new File("$buildDir/resources/main/git.properties")
+
+		if (gitPropsFile.exists()) {
+			ant.delete(file: gitPropsFile)
+		}
+
+//		def grgit = Grgit.open(currentDir: file('.'))
+//		def lastCommit = grgit.log(maxCommits: 1)[0]
+
+//		gitPropsFile << """# This file is generated during the build.
+//git.commit.id=$lastCommit.id
+//git.commit.time=${new Date(new Integer(lastCommit.time).longValue() * 1000)}
+//git.branch=$grgit.branch.current.name${grgit.status().clean ? '' : ' (with local changes)'}
+//"""
+//		println gitPropsFile.text
+	}
+
+	from "$buildDir/resources/main/git.properties"
+	archiveBaseName.set("${project.name}")
+	archiveVersion.set("$buildVersion")
+	manifest {
+		attributes("Implementation-Title": project.'implementation.title',
+				"Implementation-version": buildVersion)
+	}
+	exclude "Dockerfile"
+	exclude "startup.sh"
+}
+
+
